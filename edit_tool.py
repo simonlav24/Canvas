@@ -4,14 +4,13 @@ from typing import Protocol
 import pygame
 from pygame import Vector2
 
-
-class Context(Protocol):
-    ...
+from transformation import Transformation
+from viewport import Viewport
 
 
 class EditTool:
     """Base class for editor tools using State pattern"""
-    def __init__(self, context: Context):
+    def __init__(self, context: Viewport):
         self.viewport = context
 
     def handle_mouse_down(self, event) -> 'EditTool':
@@ -45,7 +44,7 @@ class EditTool:
 
 class IdleTool(EditTool):
     """Default tool state for hovering and detection"""
-    def __init__(self, viewport: Context):
+    def __init__(self, viewport: Viewport):
         super().__init__(viewport)
         self.clicked_on_empty_space = False
 
@@ -54,9 +53,8 @@ class IdleTool(EditTool):
         self.clicked_on_empty_space = False
         next_tool = self
 
-        if False:
-            # check for elements
-            ...
+        if self.viewport.hovered_handle:
+            next_tool = DragElementTool(self.viewport, self.viewport.hovered_handle)
         
         else:
             # click in empty space
@@ -71,24 +69,24 @@ class IdleTool(EditTool):
 
 
 class DragElementTool(EditTool):
-    """Handles dragging of single or multiple nodes"""
+    """Handles dragging of single or multiple handles"""
     def __init__(self, viewport, main_element):
         super().__init__(viewport)
         self.main_element = main_element
-        mouse_pos = self.viewport.world_transform.transform_back(pygame.mouse.get_pos())
-        self.drag_offset = mouse_pos - self.main_element.pos
+        mouse_pos = self.viewport.world_transform.transform_back(Transformation(Vector2(pygame.mouse.get_pos())))
+        self.drag_offset = mouse_pos.pos - self.main_element.transformation.pos
 
     def handle_mouse_motion(self, event):
-        """Updates node positions maintaining relative offsets"""
-        pos = self.viewport.world_transform.transform_back(event.pos)
+        """Updates positions maintaining relative offsets"""
+        pos = self.viewport.world_transform.transform_back(Transformation(Vector2(event.pos))).pos
 
-        for node in self.viewport.selected_elements:
-            if node is self.main_element:
-                continue
-            node_to_main = node.pos - self.main_element.pos
-            node.pos = Vector2(pos - self.drag_offset + node_to_main)
+        # for handle in self.viewport.selected_elements:
+        #     if node is self.main_element:
+        #         continue
+        #     node_to_main = node.pos - self.main_element.pos
+        #     node.pos = Vector2(pos - self.drag_offset + node_to_main)
 
-        self.main_element.pos = Vector2(pos - self.drag_offset)
+        self.main_element.transformation.pos = Vector2(pos - self.drag_offset)
         return self
 
     def handle_mouse_up(self, event):

@@ -1,41 +1,27 @@
 
 
-from dataclasses import dataclass
 import pygame
 from pygame import Vector2
 
 from world_globals import *
 from edit_tool import *
 from transformation import Transformation
+from viewport import Viewport
 from draw_utils import draw_axis, draw_grid
-from element import Element
-
-
-@dataclass
-class Database:
-    elements: list[Element] = []
-
-
-
-class Viewport:
-    def __init__(self, world_transform: Transformation, database: Database):
-        self.world_transform = world_transform
-        self.database = database
-        self.selected_elements: list[Element] = []
-
-    def get_element_at(self, world_pos: Vector2) -> Element | None:
-        ...
-
+from element import Element, Database
+from handle import Handle
 
 
 class WorldContext:
     def __init__(self):
         self.win: pygame.Surface = None
-        self.database = Database()
         self.clock = pygame.time.Clock()
 
+        self.database = Database()
         self.world_transform = Transformation(Vector2())
-        self.tool = IdleTool(self)
+
+        self.viewport = Viewport(self.world_transform, self.database)
+        self.tool = IdleTool(self.viewport)
 
     def initialize(self):
         pygame.init()
@@ -79,7 +65,7 @@ class WorldContext:
             self.tool = self.tool.handle_key_up(event)
 
     def step(self) -> None:
-        ...
+        self.viewport.step()
 
     def draw(self) -> None:
         self.win.fill((30, 30, 30))
@@ -89,6 +75,8 @@ class WorldContext:
 
         for element in self.database.elements:
             element.draw(self.win, self.world_transform)
+
+        self.viewport.draw(self.win, self.world_transform)
 
     def main_loop(self):
         done = False

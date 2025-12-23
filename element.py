@@ -1,23 +1,34 @@
 
+from dataclasses import dataclass, field
+
 import pygame
 from pygame import Vector2
+
 from transformation import Transformation
 from world_globals import *
-
 from handle import Handle
+
+
 
 class Element:
     def __init__(self):
         self.transformation = Transformation(Vector2())
+        self.handles: list[Handle] = []
     
     def draw(self, win: pygame.Surface, transform: Transformation) -> None:
         ...
+
+
+@dataclass
+class Database:
+    elements: list[Element] = field(default_factory=list)
 
 
 class TokenElement(Element):
     def __init__(self, surf: pygame.Surface):
         super().__init__()
         self.surf = surf
+        self.handles.append(Handle(self.transformation, max(*self.surf.get_size()) / 2, self))
     
     def draw(self, win: pygame.Surface, world_transform: Transformation) -> None:
         # Combine element's transform with world transform
@@ -38,6 +49,8 @@ class TokenElement(Element):
         draw_pos = screen_transform.pos - Vector2(scaled_width / 2, scaled_height / 2)
         
         win.blit(scaled_surf, draw_pos)
+        # for handle in self.handles:
+        #     handle.draw(win, world_transform)
 
 
 class RectanglarSurfElement(Element):
