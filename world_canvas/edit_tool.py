@@ -4,8 +4,8 @@ from typing import Protocol
 import pygame
 from pygame import Vector2
 
-from transformation import Transformation
-from viewport import Viewport
+from world_canvas.transformation import Transformation
+from world_canvas.viewport import Viewport
 
 
 class EditTool:

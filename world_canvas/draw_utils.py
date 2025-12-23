@@ -2,8 +2,8 @@
 import pygame
 from pygame import Vector2
 
-from transformation import Transformation
-from world_globals import *
+from world_canvas.transformation import Transformation
+from world_canvas import world_globals
 
 
 
@@ -31,7 +31,7 @@ def draw_grid(win: pygame.Surface, world_transform: Transformation, base_grid_si
     
     # Calculate visible world bounds
     top_left_world = world_transform.pos
-    bottom_right_world = world_transform.pos + Vector2(WIDTH, HEIGHT) / world_transform.scale
+    bottom_right_world = world_transform.pos + Vector2(world_globals.win_width, world_globals.win_height) / world_transform.scale
     
     # Find the first grid line positions (snap to grid)
     start_x = (top_left_world.x // grid_size) * grid_size
@@ -41,12 +41,12 @@ def draw_grid(win: pygame.Surface, world_transform: Transformation, base_grid_si
     x = start_x
     while x <= bottom_right_world.x:
         screen_x = (x - world_transform.pos.x) * world_transform.scale
-        pygame.draw.line(win, (60, 60, 60), (screen_x, 0), (screen_x, HEIGHT), 1)
+        pygame.draw.line(win, (60, 60, 60), (screen_x, 0), (screen_x, world_globals.win_height), 1)
         x += grid_size
     
     # Draw horizontal lines
     y = start_y
     while y <= bottom_right_world.y:
         screen_y = (y - world_transform.pos.y) * world_transform.scale
-        pygame.draw.line(win, (60, 60, 60), (0, screen_y), (WIDTH, screen_y), 1)
+        pygame.draw.line(win, (60, 60, 60), (0, screen_y), (world_globals.win_width, screen_y), 1)
         y += grid_size

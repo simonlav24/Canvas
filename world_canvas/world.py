@@ -3,16 +3,16 @@
 import pygame
 from pygame import Vector2
 
-from world_globals import *
-from edit_tool import *
-from transformation import Transformation
-from viewport import Viewport
-from draw_utils import draw_axis, draw_grid
-from element import Element, Database
-from handle import Handle
+from world_canvas import world_globals
+from world_canvas.edit_tool import EditTool, IdleTool
+from world_canvas.transformation import Transformation
+from world_canvas.viewport import Viewport
+from world_canvas.draw_utils import draw_axis, draw_grid
+from world_canvas.element import Element, Database
 
 
-class WorldContext:
+
+class WorldCanvas:
     def __init__(self):
         self.win: pygame.Surface = None
         self.clock = pygame.time.Clock()
@@ -21,11 +21,12 @@ class WorldContext:
         self.world_transform = Transformation(Vector2())
 
         self.viewport = Viewport(self.world_transform, self.database)
-        self.tool = IdleTool(self.viewport)
+        self.tool: EditTool = IdleTool(self.viewport)
 
-    def initialize(self):
+    def initialize(self, width, height):
+        world_globals.initialize(width, height)
         pygame.init()
-        self.win = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.win = pygame.display.set_mode((world_globals.win_width, world_globals.win_height))
         pygame.display.set_caption("Map")
 
     def add_element(self, element: Element) -> None:
@@ -93,12 +94,12 @@ class WorldContext:
             self.draw()
 
             pygame.display.flip()
-            self.clock.tick(FPS)
+            self.clock.tick(world_globals.FPS)
         pygame.quit()
 
 
 def main():
-    context = WorldContext()
+    context = WorldCanvas()
     context.initialize()
     context.main_loop()
 

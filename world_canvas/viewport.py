@@ -4,11 +4,9 @@
 import pygame
 from pygame import Vector2
 
-from world_globals import *
-from edit_tool import *
-from transformation import Transformation
-from element import Element, Database
-from handle import Handle
+from world_canvas.transformation import Transformation
+from world_canvas.element import Element, Database
+from world_canvas.handle import Handle
 
 
 class Viewport:

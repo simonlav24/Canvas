@@ -2,7 +2,7 @@
 from typing import Any
 
 import pygame
-from transformation import Transformation
+from world_canvas.transformation import Transformation
 
 
 class Handle:

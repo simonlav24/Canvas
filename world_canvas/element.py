@@ -4,9 +4,9 @@ from dataclasses import dataclass, field
 import pygame
 from pygame import Vector2
 
-from transformation import Transformation
-from world_globals import *
-from handle import Handle
+from world_canvas.transformation import Transformation
+from world_canvas import world_globals
+from world_canvas.handle import Handle
 
 
 
@@ -87,8 +87,8 @@ class RectanglarSurfElement(Element):
         # Calculate visible region in screen coordinates
         visible_left = max(0, -screen_pos.x)
         visible_top = max(0, -screen_pos.y)
-        visible_right = min(scaled_width, WIDTH - screen_pos.x)
-        visible_bottom = min(scaled_height, HEIGHT - screen_pos.y)
+        visible_right = min(scaled_width, world_globals.win_width - screen_pos.x)
+        visible_bottom = min(scaled_height, world_globals.win_height - screen_pos.y)
         
         # Check if any part is visible
         if visible_left >= visible_right or visible_top >= visible_bottom:
