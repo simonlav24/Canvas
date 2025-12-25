@@ -5,6 +5,8 @@ from pygame import Vector2
 from world_canvas.transformation import Transformation
 from world_canvas import world_globals
 
+RULER_BACK_COLOR = (37, 37, 37)
+RULER_TITLE_COLOR = (128, 128, 128)
 
 
 def draw_axis(win: pygame.Surface, world_transform: Transformation) -> None:
@@ -15,7 +17,8 @@ def draw_axis(win: pygame.Surface, world_transform: Transformation) -> None:
     pygame.draw.line(win, (255,0,0), axis_center.pos + Vector2(1, 0), axis_x.pos, 1)
     pygame.draw.line(win, (0,255,0), axis_center.pos + Vector2(0, 1), axis_y.pos, 1)
 
-def draw_grid(win: pygame.Surface, world_transform: Transformation, base_grid_size: int = 100) -> None:
+
+def draw_grid(win: pygame.Surface, world_transform: Transformation, base_grid_size: int = 100, draw_ruler: bool=True) -> None:
     # Adjust grid size based on zoom level
     # When zoomed in too much, increase grid size; when zoomed out, decrease it
     grid_size = base_grid_size
@@ -50,3 +53,6 @@ def draw_grid(win: pygame.Surface, world_transform: Transformation, base_grid_si
         screen_y = (y - world_transform.pos.y) * world_transform.scale
         pygame.draw.line(win, (60, 60, 60), (0, screen_y), (world_globals.win_width, screen_y), 1)
         y += grid_size
+
+    # if draw_ruler:
+    #     pygame.draw.rect(win, RULER_BACK_COLOR, ((0, 0), (world_globals.win_width, 16)))

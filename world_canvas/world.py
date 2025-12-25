@@ -1,4 +1,5 @@
 
+from typing import Any
 
 import pygame
 from pygame import Vector2
@@ -9,8 +10,6 @@ from world_canvas.transformation import Transformation
 from world_canvas.viewport import Viewport
 from world_canvas.draw_utils import draw_axis, draw_grid
 from world_canvas.element import Element, Database
-
-
 
 class WorldCanvas:
     def __init__(self):
@@ -23,6 +22,8 @@ class WorldCanvas:
         self.viewport = Viewport(self.world_transform, self.database)
         self.tool: EditTool = IdleTool(self.viewport)
 
+        self.assigned_tools: dict[int, Any] = {}
+
     def initialize(self, width, height):
         world_globals.initialize(width, height)
         pygame.init()
@@ -33,22 +34,7 @@ class WorldCanvas:
         self.database.elements.append(element)
 
     def handle_event(self, event) -> None:
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            ...
-
-        if event.type == pygame.MOUSEWHEEL:
-            mouse_pos = Vector2(pygame.mouse.get_pos())
-            # Convert mouse position to world coordinates before zoom
-            world_pos = self.world_transform.pos + mouse_pos / self.world_transform.scale
-            
-            # Apply zoom
-            if event.y > 0:
-                self.world_transform.scale *= 1.1
-            else:
-                self.world_transform.scale *= 0.9
-            
-            # Adjust position so the world point stays under the mouse
-            self.world_transform.pos = world_pos - mouse_pos / self.world_transform.scale
+        self.viewport.handle_event(event)
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             self.tool = self.tool.handle_mouse_down(event)
@@ -60,10 +46,17 @@ class WorldCanvas:
             self.tool = self.tool.handle_mouse_motion(event)
 
         if event.type == pygame.KEYDOWN:
-            self.tool = self.tool.handle_key_down(event)
+            if event.key in self.assigned_tools.keys():
+                self.tool = self.assigned_tools[event.key]()
+                print(self.tool)
+            else:
+                self.tool = self.tool.handle_key_down(event)
 
         if event.type == pygame.KEYUP:
             self.tool = self.tool.handle_key_up(event)
+
+        if self.tool is None:
+            self.tool = IdleTool(self.viewport)
 
     def step(self) -> None:
         self.viewport.step()
@@ -78,6 +71,9 @@ class WorldCanvas:
             element.draw(self.win, self.world_transform)
 
         self.viewport.draw(self.win, self.world_transform)
+
+    def assign_tool(self, key: int, tool_cls: Any) -> None:
+        self.assigned_tools[key] = lambda: tool_cls(self.viewport)
 
     def main_loop(self):
         done = False
