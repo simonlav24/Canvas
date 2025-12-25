@@ -70,6 +70,7 @@ class WorldCanvas:
         for element in self.database.elements:
             element.draw(self.win, self.world_transform)
 
+        self.tool.draw(self.win)
         self.viewport.draw(self.win, self.world_transform)
 
     def assign_tool(self, key: int, tool_cls: Any) -> None:
