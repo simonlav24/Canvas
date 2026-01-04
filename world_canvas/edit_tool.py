@@ -1,12 +1,18 @@
 
 from typing import Protocol
+from enum import Enum
 
 import pygame
 from pygame import Vector2
 
 from world_canvas.transformation import Transformation
 from world_canvas.viewport import Viewport
+from world_canvas.handle import Selectable
 
+
+class SelectToolMode(Enum):
+    HANDLE = 0
+    ELEMENT = 1
 
 class EditTool:
     """Base class for editor tools using State pattern"""
@@ -37,24 +43,25 @@ class EditTool:
         """Updates tool state each frame"""
         ...
 
-    def draw(self, win: pygame.Surface) -> None:
+    def draw(self, win: pygame.Surface, transform: Transformation) -> None:
         """Draws tool-specific overlays"""
         ...
 
-
-class IdleTool(EditTool):
-    """Default tool state for hovering and detection"""
+class SelectTool(EditTool):
+    """Default tool state for hovering and detection handles"""
     def __init__(self, viewport: Viewport):
         super().__init__(viewport)
         self.clicked_on_empty_space = False
+        self.hovered: Selectable = None
+        self.mode = SelectToolMode.HANDLE
 
     def handle_mouse_down(self, event) -> 'EditTool':
         """Determines next tool based on what was clicked"""
         self.clicked_on_empty_space = False
         next_tool = self
 
-        if self.viewport.hovered_handle:
-            next_tool = DragElementTool(self.viewport, self.viewport.hovered_handle)
+        if self.hovered:
+            next_tool = DragElementTool(self.viewport, self.hovered)
         
         else:
             # click in empty space
@@ -65,12 +72,21 @@ class IdleTool(EditTool):
 
     def step(self):
         """Updates hover detection each frame"""
-        ...
+        mouse_in_world = self.viewport.world_transform.transform_back(Transformation(Vector2(pygame.mouse.get_pos()))).pos
+        if self.mode == SelectToolMode.HANDLE:
+            self.hovered = self.viewport.get_handle_at(mouse_in_world)
+        else:
+            self.hovered = self.viewport.get_element_at(mouse_in_world)
+
+    def draw(self, win: pygame.Surface, transform: Transformation) -> None:
+        if self.mode == SelectToolMode.HANDLE and self.hovered:
+            self.hovered.draw(win, transform)
+
 
 
 class DragElementTool(EditTool):
     """Handles dragging of single or multiple handles"""
-    def __init__(self, viewport, main_element):
+    def __init__(self, viewport, main_element: Selectable):
         super().__init__(viewport)
         self.main_element = main_element
         mouse_pos = self.viewport.world_transform.transform_back(Transformation(Vector2(pygame.mouse.get_pos())))
@@ -80,18 +96,12 @@ class DragElementTool(EditTool):
         """Updates positions maintaining relative offsets"""
         pos = self.viewport.world_transform.transform_back(Transformation(Vector2(event.pos))).pos
 
-        # for handle in self.viewport.selected_elements:
-        #     if node is self.main_element:
-        #         continue
-        #     node_to_main = node.pos - self.main_element.pos
-        #     node.pos = Vector2(pos - self.drag_offset + node_to_main)
-
         self.main_element.transformation.pos = Vector2(pos - self.drag_offset)
         return self
 
     def handle_mouse_up(self, event):
         """Completes drag and returns to idle"""
-        return IdleTool(self.viewport)
+        return SelectTool(self.viewport)
 
 
 class HandTool(EditTool):
@@ -106,4 +116,4 @@ class HandTool(EditTool):
 
     def handle_mouse_up(self, event):
         """stop panning"""
-        return IdleTool(self.viewport)
+        return SelectTool(self.viewport)

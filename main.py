@@ -8,7 +8,9 @@ from pygame import Vector2
 from world_canvas import WorldCanvas
 from world_canvas import RectanglarSurfElement, TokenElement
 
-from shapes import Polygon, PolygonTool
+from shapes import Polygon, PolygonTool, Rectangle
+
+from gui import GuiContext, Label, Button
 
 def main():
     # tester
@@ -31,9 +33,46 @@ def main():
         Vector2(0, 100),
         Vector2(200, 100),
     ]))
-
+    elements.append(Rectangle((255, 255, 255), Vector2(100, 100), Vector2(200, 400)))
     [context.add_element(element) for element in elements]
-    context.main_loop()
+
+
+    # gui
+    gui_context = GuiContext()
+    gui_context.set_layout([
+        [Label('label1:'), Button('button1', key='button1')],
+        [Label('label2:'), Button('button2', key='button2')],
+        [Label('label3:'), Button('button3', key='button3')],
+    ])
+
+
+    clock = pygame.time.Clock()
+
+    done = False
+    while not done:
+        for event in pygame.event.get():
+            #
+            gui_context.handle_event(event)
+            context.handle_event(event)
+
+            if event.type == pygame.QUIT:
+                done = True
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    done = True
+        
+        for event in gui_context.get_gui_events():
+            print(f'GUI Event: {event.type}, Data: {event.data}')
+
+        context.step()
+        gui_context.step()
+        
+        context.draw()
+        gui_context.draw(context.win)
+
+        pygame.display.flip()
+        clock.tick(60)
+    pygame.quit()
 
 
 if __name__ == '__main__':

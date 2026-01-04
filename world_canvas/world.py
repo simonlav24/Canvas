@@ -5,7 +5,7 @@ import pygame
 from pygame import Vector2
 
 from world_canvas import world_globals
-from world_canvas.edit_tool import EditTool, IdleTool
+from world_canvas.edit_tool import EditTool, SelectTool
 from world_canvas.transformation import Transformation
 from world_canvas.viewport import Viewport
 from world_canvas.draw_utils import draw_axis, draw_grid
@@ -20,7 +20,9 @@ class WorldCanvas:
         self.world_transform = Transformation(Vector2())
 
         self.viewport = Viewport(self.world_transform, self.database)
-        self.tool: EditTool = IdleTool(self.viewport)
+
+        self.default_tool = SelectTool
+        self.tool: EditTool = self.default_tool(self.viewport)
 
         self.assigned_tools: dict[int, Any] = {}
 
@@ -56,9 +58,10 @@ class WorldCanvas:
             self.tool = self.tool.handle_key_up(event)
 
         if self.tool is None:
-            self.tool = IdleTool(self.viewport)
+            self.tool = self.default_tool(self.viewport)
 
     def step(self) -> None:
+        self.tool.step()
         self.viewport.step()
 
     def draw(self) -> None:
@@ -70,7 +73,7 @@ class WorldCanvas:
         for element in self.database.elements:
             element.draw(self.win, self.world_transform)
 
-        self.tool.draw(self.win)
+        self.tool.draw(self.win, self.world_transform)
         self.viewport.draw(self.win, self.world_transform)
 
     def assign_tool(self, key: int, tool_cls: Any) -> None:

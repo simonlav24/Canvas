@@ -18,6 +18,10 @@ class Element:
     def draw(self, win: pygame.Surface, transform: Transformation) -> None:
         ...
 
+    def hit_test(self, world_pos: Vector2) -> bool:
+        ...
+
+
 
 @dataclass
 class Database:
@@ -30,6 +34,9 @@ class TokenElement(Element):
         self.surf = surf
         self.handles.append(Handle(self.transformation, max(*self.surf.get_size()) / 2, self))
     
+    def hit_test(self, world_pos):
+        return self.handles[0].hit_test(world_pos)
+
     def draw(self, win: pygame.Surface, world_transform: Transformation) -> None:
         # Combine element's transform with world transform
         screen_transform = world_transform.transform(self.transformation)
