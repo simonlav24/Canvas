@@ -7,9 +7,7 @@ from pygame import Vector2
 
 from world_canvas import WorldCanvas
 from world_canvas import RectanglarSurfElement, TokenElement
-
 from shapes import Polygon, PolygonTool, Rectangle
-
 from gui import GuiContext, Label, Button
 
 def main():
