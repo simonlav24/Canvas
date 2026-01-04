@@ -8,7 +8,7 @@ from pygame import Vector2
 from world_canvas import WorldCanvas
 from world_canvas import RectanglarSurfElement, TokenElement
 from shapes import Polygon, PolygonTool, Rectangle
-from gui import GuiContext, Label, Button
+from gui import GuiContext, Label, Button, ToggleButton
 
 def main():
     # tester
@@ -19,11 +19,11 @@ def main():
     context.assign_tool(pygame.K_p, PolygonTool)
 
     elements = [
-        RectanglarSurfElement(pygame.image.load(r'C:\Users\e021776\OneDrive - Elbit Systems 365\Pictures\vaps2.png')),
+        RectanglarSurfElement(pygame.image.load(r'C:\Simon\Projects\CardGamesMaster\assets\card_sprite.png')),
     ]
 
     for _ in range(10):
-        elements.append(token := TokenElement(pygame.image.load(rf'C:\Users\e021776\OneDrive - Elbit Systems 365\Pictures\imageTest{choice([str(i+1) for i in range(3)])}.png')))
+        elements.append(token := TokenElement(pygame.image.load(r'C:\Simon\Projects\dnd-vtt\assets\tokens\Token-Character-Knight-Male.png')))
         token.transformation.pos = Vector2(randint(0, width), randint(0, height))
 
     elements.append(Polygon((255, 255, 255), [
@@ -41,6 +41,7 @@ def main():
         [Label('label1:'), Button('button1', key='button1')],
         [Label('label2:'), Button('button2', key='button2')],
         [Label('label3:'), Button('button3', key='button3')],
+        [Label('label3:'), ToggleButton('selected', key='button3')],
     ])
 
 
@@ -49,8 +50,14 @@ def main():
     done = False
     while not done:
         for event in pygame.event.get():
-            #
+            event_handled = False
             gui_context.handle_event(event)
+            for event in gui_context.get_gui_events():
+                event_handled = True
+                print(f'GUI Event: {event.type}, Data: {event.data}')
+            if event_handled:
+                continue
+
             context.handle_event(event)
 
             if event.type == pygame.QUIT:
@@ -59,9 +66,6 @@ def main():
                 if event.key == pygame.K_ESCAPE:
                     done = True
         
-        for event in gui_context.get_gui_events():
-            print(f'GUI Event: {event.type}, Data: {event.data}')
-
         context.step()
         gui_context.step()
         

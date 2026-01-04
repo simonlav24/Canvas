@@ -16,6 +16,7 @@ class GuiAssets:
 
 class GuiEventType:
     BUTTON_CLICK = 0
+    TOGGLE_BUTTON_CLICK = 1
 
 
 @dataclass
@@ -47,9 +48,17 @@ class GuiElement:
 
     def draw(self, win: pygame.Surface) -> None:
         ...
+    
+    def update(self, value: Any) -> None:
+        '''update element's value'''
+    
+    def get_value(self) -> Any:
+        '''get element's value'''
+        return None
 
 
 def calculate_layout(layout: list[list[GuiElement]], initial_pos: Vector2, assets: GuiAssets) -> tuple[list[GuiElement], Vector2]:
+    '''Calculate layout of gui elements and return list of elements with positions set and total size'''
     elements: list[GuiElement] = []
     x = initial_pos[0] + margin
     y = initial_pos[1] + margin

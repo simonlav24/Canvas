@@ -1,24 +1,23 @@
 
 
+from random import randint
+import json
+
 import pygame
 from pygame import Vector2
 
-from gui import GuiContext, Label, Button
+from gui import GuiContext, GuiStandAlone, Label, Button, ToggleButton, Textbox
 
+layout = None
 
+def handle_gui_event(event, values):
+    print(f'GUI Event: {event.type}, Data: {event.data}, values: {values}')
 
-def handle_gui_event(self, event):
-    print(event)
-
-
-def main():
+def main(layout):
     pygame.init()
 
     gui_context = GuiContext()
-    gui_context.set_layout([
-        [Label('This is a gui app')],
-        [Button('button1'), Button('button2'), Button('button3'), Button('button4')],
-    ])
+    gui_context.set_layout(layout)
     
     win = pygame.display.set_mode(gui_context.size)
     pygame.display.set_caption("Gui")
@@ -35,9 +34,22 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     done = True
+
+                if event.key == pygame.K_s:
+                    values = gui_context.get_values()
+                    # save values to file
+                    with open('gui_values.json', 'w') as f:
+                        json.dump(values, f)
+                
+                if event.key == pygame.K_l:
+                    # load values from file
+                    with open('gui_values.json', 'r') as f:
+                        values = json.load(f)
+                    gui_context.set_values(values)
         
         for event in gui_context.get_gui_events():
-            print(f'GUI Event: {event.type}, Data: {event.data}')
+            values = gui_context.get_values()
+            handle_gui_event(event, values)
 
         gui_context.step()
         
@@ -50,5 +62,19 @@ def main():
 
 
 
+def main_standalone(layout):
+    gui = GuiStandAlone(font=("david", 18), title='Gui tester')
+    gui.initialize(layout, handle_gui_event)
+    gui.main_loop()
+
+
 if __name__ == '__main__':
-    main()
+
+    layout = [
+        [Label('This is a gui app')],
+        [Button('button1'), Button('button2'), Button('button3'), Button('button4')],
+        [ToggleButton('select1'), ToggleButton('select2', toggle=True), ToggleButton('select3')],
+        [Textbox('empty', key='text1'), Textbox('empty2', key='text2')]
+    ]
+
+    main(layout)
