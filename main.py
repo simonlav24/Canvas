@@ -5,10 +5,10 @@ from random import randint, choice
 import pygame
 from pygame import Vector2
 
-from world_canvas import WorldCanvas
-from world_canvas import RectanglarSurfElement, TokenElement
-from shapes import Polygon, PolygonTool, Rectangle
-from gui import GuiContext, Label, Button, ToggleButton
+from canvasim.canvas import WorldCanvas
+from canvasim.canvas import RectanglarSurfElement, TokenElement
+from canvasim.shapes import Polygon, PolygonTool, Rectangle
+from canvasim.gui import GuiContext, Label, Button, ToggleButton
 
 def main():
     # tester

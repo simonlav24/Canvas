@@ -6,7 +6,7 @@ import json
 import pygame
 from pygame import Vector2
 
-from gui import GuiContext, GuiStandAlone, Label, Button, ToggleButton, Textbox
+from canvasim.gui import GuiContext, GuiStandAlone, Label, Button, ToggleButton, Textbox
 
 layout = None
 
