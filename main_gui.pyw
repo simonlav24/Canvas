@@ -6,7 +6,7 @@ import json
 import pygame
 from pygame import Vector2
 
-from canvasim.gui import GuiContext, GuiStandAlone, Label, Button, ToggleButton, Textbox
+from canvasim.gui import GuiContext, GuiStandAlone, Label, Button, ToggleButton, Textbox, RadioButton
 
 layout = None
 
@@ -35,13 +35,13 @@ def main(layout):
                 if event.key == pygame.K_ESCAPE:
                     done = True
 
-                if event.key == pygame.K_s:
+                if event.key == pygame.K_s and pygame.key.get_mods() & pygame.KMOD_CTRL:
                     values = gui_context.get_values()
                     # save values to file
                     with open('gui_values.json', 'w') as f:
                         json.dump(values, f)
                 
-                if event.key == pygame.K_l:
+                if event.key == pygame.K_l and pygame.key.get_mods() & pygame.KMOD_CTRL:
                     # load values from file
                     with open('gui_values.json', 'r') as f:
                         values = json.load(f)
@@ -73,8 +73,9 @@ if __name__ == '__main__':
     layout = [
         [Label('This is a gui app')],
         [Button('button1'), Button('button2'), Button('button3'), Button('button4')],
-        [ToggleButton('select1'), ToggleButton('select2', toggle=True), ToggleButton('select3')],
-        [Textbox('empty', key='text1'), Textbox('empty2', key='text2')]
+        [Label('toggles:'), ToggleButton('select2', toggle=True), ToggleButton('select3')],
+        [Label('radios:'), RadioButton('option1', 'group1', toggle=True), RadioButton('option2', 'group1'), RadioButton('option3', 'group1')],
+        [Textbox('this is text', key='text1'), Textbox('empty', key='text2')],
     ]
 
     main(layout)

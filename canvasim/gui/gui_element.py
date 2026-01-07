@@ -17,13 +17,13 @@ class GuiAssets:
 class GuiEventType:
     BUTTON_CLICK = 0
     TOGGLE_BUTTON_CLICK = 1
-
+    RADIO_BUTTON_CLICK = 2
 
 @dataclass
 class GuiEvent:
     type: GuiEventType
     data: dict[Any, Any]
-
+    caller: 'GuiElement'
 
 class GuiElement:
     def __init__(self, **kwargs):

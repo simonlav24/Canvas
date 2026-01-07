@@ -4,8 +4,9 @@ from typing import Any
 import pygame
 from pygame import Vector2
 
-from .gui_element import GuiElement, GuiEvent, GuiAssets, calculate_layout
+from .gui_element import GuiElement, GuiEvent, GuiEventType, GuiAssets, calculate_layout
 from .gui_globals import *
+from .radio_button import RadioButton
 
 
 class GuiContext:
@@ -19,13 +20,20 @@ class GuiContext:
             self.pos: Vector2 = Vector2(0, 0)
         self.focused_element: GuiElement = None
         self.font = kwargs.get('font', default_font)
-        print(f'font: {self.font}')
+        self.radio_groups: dict[Any, list[RadioButton]] = {}
     
     def set_layout(self, layout: list[list[GuiElement]]):
         self.assets = GuiAssets(pygame.font.SysFont(*self.font))
         elements, size = calculate_layout(layout, self.pos, self.assets)
         self.size = size
         self.elements = elements
+
+        for element in self.elements:
+            if isinstance(element, RadioButton):
+                group = element.group
+                if group not in self.radio_groups:
+                    self.radio_groups[group] = []
+                self.radio_groups[group].append(element)
 
     def get_gui_events(self) -> list[GuiEvent]:
         events = self.gui_events.copy()
@@ -51,6 +59,18 @@ class GuiContext:
             output_event = element.handle_event(event)
             if output_event is not None:
                 self.gui_events.append(output_event)
+
+                # Handle radio button logic
+                if output_event.type == GuiEventType.RADIO_BUTTON_CLICK:
+                    group = self.radio_groups.get(output_event.caller.group, [])
+                    is_any_updated = False
+                    for radio in group:
+                        if radio != output_event.caller:
+                            if radio.get_value() == True:
+                                radio.update(False)
+                                is_any_updated = True
+                    if not is_any_updated:
+                        output_event.caller.update(True)
         
         # Check if focus changed
         new_focused = None
