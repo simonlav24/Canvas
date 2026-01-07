@@ -15,3 +15,4 @@ from .primitives import (
 from .toggle_button import ToggleButton
 from .radio_button import RadioButton
 from .text_box import Textbox
+from .slider import Slider

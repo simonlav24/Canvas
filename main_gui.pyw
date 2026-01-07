@@ -6,7 +6,7 @@ import json
 import pygame
 from pygame import Vector2
 
-from canvasim.gui import GuiContext, GuiStandAlone, Label, Button, ToggleButton, Textbox, RadioButton
+from canvasim.gui import GuiContext, GuiStandAlone, Label, Button, ToggleButton, Textbox, RadioButton, Slider
 
 layout = None
 
@@ -76,6 +76,7 @@ if __name__ == '__main__':
         [Label('toggles:'), ToggleButton('select2', toggle=True), ToggleButton('select3')],
         [Label('radios:'), RadioButton('option1', 'group1', toggle=True), RadioButton('option2', 'group1'), RadioButton('option3', 'group1')],
         [Textbox('this is text', key='text1'), Textbox('empty', key='text2')],
+        [Slider(0, 100, 25, key='slider1'), Slider(key='slider2')],
     ]
 
     main(layout)
