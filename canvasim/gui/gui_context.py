@@ -100,7 +100,8 @@ class GuiContext:
 class GuiStandAlone(GuiContext):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.title = kwargs.get('title', 'Gui App')
+        self.title = kwargs.get('title', 'CanvaSim App')
+        self.frame = pygame.NOFRAME if kwargs.get('no_frame', False) else 0
         
     def initialize(self, layout: list[list[GuiElement]], event_handler=None) -> None:
         pygame.init()
@@ -108,7 +109,7 @@ class GuiStandAlone(GuiContext):
         self.set_layout(layout)
 
     def main_loop(self) -> None:
-        win = pygame.display.set_mode(self.size, pygame.NOFRAME)
+        win = pygame.display.set_mode(self.size, self.frame)
         pygame.display.set_caption(self.title)
         clock = pygame.time.Clock()
 

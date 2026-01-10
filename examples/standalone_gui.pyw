@@ -78,4 +78,4 @@ if __name__ == '__main__':
         [Slider(0, 100, 25, key='slider1'), Slider(key='slider2')],
     ]
 
-    main(layout)
+    main_standalone(layout)

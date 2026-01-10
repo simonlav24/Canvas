@@ -9,7 +9,7 @@ from .gui_globals import *
 class Textbox(GuiElement):
     def __init__(self, initial_text: str="", width: int=200, **kwargs):
         super().__init__(**kwargs)
-        self.text = initial_text
+        self.text = str(initial_text)
         self.cursor_pos = len(self.text)
         self.selection_start = self.cursor_pos
         self.selection_end = self.cursor_pos

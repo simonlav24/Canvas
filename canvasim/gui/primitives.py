@@ -13,10 +13,16 @@ class Label(GuiElement):
     def __init__(self, text: str, **kwargs):
         super().__init__(**kwargs)
         self.text = text
-        self.surf: pygame.Surface = None   
+        self.surf: pygame.Surface = None
+        self.width = kwargs.get('width', None)
 
     def initialize(self, assets: GuiAssets) -> None:
-        self.surf = assets.font.render(self.text, True, COLOR_LABEL)
+        font_surf = assets.font.render(self.text, True, COLOR_LABEL)
+        width = font_surf.get_width()
+        if self.width is not None:
+            width = self.width
+        self.surf = pygame.Surface((width, font_surf.get_height()), pygame.SRCALPHA)
+        self.surf.blit(font_surf, (0, 0))
 
     def get_size(self) -> Vector2:
         return Vector2(self.surf.get_size()) + Vector2(margin, margin) * 2
