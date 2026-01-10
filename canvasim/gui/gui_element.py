@@ -34,8 +34,11 @@ class GuiElement:
     def initialize(self, assets: GuiAssets) -> None:
         ...
 
-    def set_pos(self, pos: Vector2) -> None:
-        self.pos = pos
+    def set_pos(self, pos: Vector2, absolute: bool=True) -> None:
+        if absolute:
+            self.pos = pos
+        else:
+            self.pos += pos
 
     def get_size(self) -> Vector2:
         ...
@@ -57,6 +60,10 @@ class GuiElement:
         return None
 
 
+class Filler(GuiElement):
+    ...
+
+
 def calculate_layout(layout: list[list[GuiElement]], initial_pos: Vector2, assets: GuiAssets) -> tuple[list[GuiElement], Vector2]:
     '''Calculate layout of gui elements and return list of elements with positions set and total size'''
     elements: list[GuiElement] = []
@@ -69,6 +76,8 @@ def calculate_layout(layout: list[list[GuiElement]], initial_pos: Vector2, asset
         x = initial_pos[0] + margin
         row_width = 0
         for element in row:
+            if isinstance(element, Filler):
+                continue
             element.set_pos(Vector2(x, y))
             element.initialize(assets)
             row_height = max(row_height, element.get_size()[1])
@@ -78,7 +87,29 @@ def calculate_layout(layout: list[list[GuiElement]], initial_pos: Vector2, asset
         y += row_height + margin
         h += row_height + margin
         w = max(w, row_width)
-        
+
     size = Vector2(w + margin, h)
+
+    # second pass for fillers
+    for row in layout:
+        row_filler_count = 0
+        row_space = 0
+        for element in row:
+            if isinstance(element, Filler):
+                row_filler_count += 1
+            else:
+                row_space += element.get_size()[0] + margin
+
+        row_empty_space = size[0] - row_space - margin
+        if row_filler_count == 0:
+            continue
+        
+        filler_width = row_empty_space / row_filler_count
+
+        for i, element in enumerate(row):
+            if isinstance(element, Filler) and i < len(row) - 1:
+                for next_element in row[i + 1:]:
+                    next_element.set_pos(Vector2(filler_width, 0), absolute=False)
+
     return elements, size
     

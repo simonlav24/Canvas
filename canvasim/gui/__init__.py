@@ -4,7 +4,7 @@ Provides basic gui elements like buttons, labels, textboxes, toggle buttons, etc
 can be used as a standalone gui app or integrated into an existing pygame application.
 '''
 
-from .gui_element import GuiElement
+from .gui_element import GuiElement, Filler
 from .gui_context import GuiContext, GuiStandAlone
 
 from .primitives import (

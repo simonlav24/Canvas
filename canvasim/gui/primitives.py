@@ -43,6 +43,14 @@ class Button(GuiElement):
         self.layout = layout
         self.is_hovered = False
 
+    def set_pos(self, pos: Vector2, absolute: bool=True) -> None:
+        if absolute:
+            self.pos = pos
+        else:
+            self.pos += pos
+            for element in self.elements:
+                element.set_pos(pos, absolute)
+
     def initialize(self, assets: GuiAssets) -> None:
         if self.layout is None:
             self.layout = [[Label(self.text)]]
@@ -151,3 +159,4 @@ class ToggleableButton(Button):
     def draw(self, win: pygame.Surface) -> None:
         for element in self.elements:
             element.draw(win)
+

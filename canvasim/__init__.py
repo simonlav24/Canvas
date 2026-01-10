@@ -7,11 +7,11 @@ from .canvas import WorldCanvas, Element, TokenElement, RectanglarSurfElement, E
 from .shapes import Polygon, PolygonTool, Rectangle, RectangleTool
 
 # GUI
-from .gui import GuiContext, GuiStandAlone, Label, Button, ToggleButton, RadioButton, Textbox, Slider
+from .gui import GuiContext, GuiStandAlone, Label, Button, ToggleButton, RadioButton, Textbox, Slider, Filler
 
 __all__ = [
     "__version__",
     "WorldCanvas", "Element", "TokenElement", "RectanglarSurfElement", "EditTool", "Transformation",
     "Polygon", "PolygonTool", "Rectangle", "RectangleTool",
-    "GuiContext", "GuiStandAlone", "Label", "Button", "ToggleButton", "RadioButton", "Textbox", "Slider",
+    "GuiContext", "GuiStandAlone", "Label", "Button", "ToggleButton", "RadioButton", "Textbox", "Slider", "Filler"
 ]

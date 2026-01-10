@@ -6,10 +6,18 @@
     "configurations": [
     
         {
-            "name": "Python Debugger: Gui",
+            "name": "Gui",
             "type": "debugpy",
             "request": "launch",
             "program": "main_gui.pyw",
+            "console": "integratedTerminal"
+        }
+
+        {
+            "name": "Current",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
             "console": "integratedTerminal"
         }
     ]
