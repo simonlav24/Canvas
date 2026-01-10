@@ -160,3 +160,12 @@ class ToggleableButton(Button):
         for element in self.elements:
             element.draw(win)
 
+
+class Colums(GuiElement):
+    def __init__(self, layout: list[list[GuiElement]], **kwargs):
+        super().__init__(**kwargs)
+        self.layout = layout
+
+    def initialize(self, assets):
+        ...
+        

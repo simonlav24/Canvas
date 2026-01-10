@@ -41,7 +41,7 @@ class GuiElement:
             self.pos += pos
 
     def get_size(self) -> Vector2:
-        ...
+        return self.size
 
     def handle_event(self, event: pygame.Event) -> GuiEvent:
         ...
