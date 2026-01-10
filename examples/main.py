@@ -10,8 +10,11 @@ from canvasim.canvas import RectanglarSurfElement, TokenElement
 from canvasim.shapes import Polygon, PolygonTool, Rectangle
 from canvasim.gui import GuiContext, Label, Button, ToggleButton
 
+image_background = ...
+image_token = ...
+
 def main():
-    # tester
+
     context = WorldCanvas()
     width, height = 1280, 720
     context.initialize(width, height)
@@ -19,11 +22,11 @@ def main():
     context.assign_tool(pygame.K_p, PolygonTool)
 
     elements = [
-        RectanglarSurfElement(pygame.image.load(r'C:\Simon\Projects\CardGamesMaster\assets\card_sprite.png')),
+        RectanglarSurfElement(pygame.image.load(image_background)),
     ]
 
     for _ in range(10):
-        elements.append(token := TokenElement(pygame.image.load(r'C:\Simon\Projects\dnd-vtt\assets\tokens\Token-Character-Knight-Male.png')))
+        elements.append(token := TokenElement(pygame.image.load(image_token)))
         token.transformation.pos = Vector2(randint(0, width), randint(0, height))
 
     elements.append(Polygon((255, 255, 255), [

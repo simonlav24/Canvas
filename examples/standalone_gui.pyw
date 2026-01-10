@@ -4,7 +4,6 @@ from random import randint
 import json
 
 import pygame
-from pygame import Vector2
 
 from canvasim.gui import GuiContext, GuiStandAlone, Label, Button, ToggleButton, Textbox, RadioButton, Slider
 
